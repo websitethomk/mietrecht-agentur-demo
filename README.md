@@ -51,5 +51,6 @@ Die Daten liegen statisch in `app/page.tsx`. Noch nicht verbunden sind:
 - `app/globals.css` — Design und responsive Darstellung
 - `app/layout.tsx` — Seitentitel und Metadaten
 - `tests/rendered-html.test.mjs` — Render-Smoke-Test
+- `ANWALTSINTERVIEW.md` — Leitfaden für Konzept- und Pilotgespräche
 
 Das Projekt ist absichtlich als kompakte Single-Page-Demo gebaut, damit Erkenntnisse aus Anwaltsgesprächen schnell eingearbeitet werden können.

@@ -79,10 +79,10 @@ export default function Home() {
     <div className="demo-banner"><span>Demo-Prototyp</span>Nicht rechtsverbindliche Vorprüfung · keine Rechtsberatung</div>
     <header className="topbar">
       <button className="brand" onClick={() => setScreen(0)}><b>M</b><span>Mietrecht <strong>Agentur</strong></span></button>
-      <div><small>Fiktiver Musterfall · Graz</small>{screen > 0 && <button className="case-link" onClick={() => setScreen(6)}>Kanzlei-Ansicht ↗</button>}</div>
+      <div><small>{screen === 7 ? "Vermieter-Modus · Vertragsentwurf" : "Fiktiver Musterfall · Graz"}</small>{screen > 0 && screen < 7 && <button className="case-link" onClick={() => setScreen(6)}>Kanzlei-Ansicht ↗</button>}{screen === 7 && <button className="case-link" onClick={() => setScreen(0)}>Zur Übersicht</button>}</div>
     </header>
 
-    {screen === 0 ? <Landing onStart={() => setScreen(1)} onCase={() => setScreen(6)} /> : <div className="app-shell">
+    {screen === 0 ? <Landing onStart={() => setScreen(1)} onCase={() => setScreen(6)} onLandlord={() => setScreen(7)} /> : screen === 7 ? <LandlordDemo onClose={() => setScreen(0)} /> : <div className="app-shell">
       <aside className="sidebar">
         <div className="case-id"><small>Demo-Fall</small><strong>MA–GRAZ–001</strong><span>Musterstraße 18 · Graz</span></div>
         <nav>{steps.map(([id, name, detail]) => <button key={id} className={`${screen === id ? "active" : ""} ${screen > id ? "done" : ""}`} onClick={() => setScreen(id)}><i>{screen > id ? "✓" : id}</i><span><b>{name}</b><small>{detail}</small></span></button>)}</nav>
@@ -101,9 +101,10 @@ export default function Home() {
   </main>;
 }
 
-function Landing({ onStart, onCase }: { onStart: () => void; onCase: () => void }) {
+function Landing({ onStart, onCase, onLandlord }: { onStart: () => void; onCase: () => void; onLandlord: () => void }) {
   return <>
-    <section className="hero"><span className="eyebrow">Digitale Fallvorbereitung für Mietrecht</span><h1>Vom Mietvertrag zum<br/><em>prüfbaren Sachverhalt.</em></h1><p>Vertragsdaten strukturieren, externe Hinweise einordnen und offene Rechtsfragen sichtbar machen — bevor die juristische Prüfung beginnt.</p><div><button className="primary large" onClick={onStart}>Mietvertrag prüfen <span>→</span></button><button className="secondary" onClick={onCase}>Kanzlei-Ansicht ansehen</button></div><small>Geführte Demo · ca. 3 Minuten · fiktiver Musterfall</small></section>
+    <section className="hero"><span className="eyebrow">Digitale Fallvorbereitung für Mietrecht</span><h1>Vom Mietvertrag zum<br/><em>prüfbaren Sachverhalt.</em></h1><p>Vertragsdaten strukturieren, externe Hinweise einordnen und offene Rechtsfragen sichtbar machen — vor einer juristischen Prüfung.</p><div><button className="primary large" onClick={onStart}>Mieter-Fall prüfen <span>→</span></button><button className="landlord-button" onClick={onLandlord}>Vermieter-Check ansehen <span>→</span></button><button className="secondary" onClick={onCase}>Kanzlei-Ansicht</button></div><small>Zwei getrennte Demo-Pfade · fiktive Musterfälle · keine Rechtsberatung</small></section>
+    <section className="audience-cards"><button onClick={onStart}><span>Für Mieter</span><h3>Bestehenden Vertrag vorprüfen</h3><p>Fakten, Evidenz, MRG-Routing und strukturierte Übergabe an eine Kanzlei.</p><b>Zum Mieter-Fall →</b></button><button onClick={onLandlord}><span>Für Vermieter & Verwaltung</span><h3>Vertragsentwurf vor Abschluss prüfen</h3><p>Formale Lücken, Dokumentationsrisiken und Punkte für die anwaltliche Freigabe erkennen.</p><b>Zum Vermieter-Check →</b></button></section>
     <section className="preview"><div className="preview-head"><span><i/>Fall MA–GRAZ–001<strong>Musterstraße 18, 8010 Graz</strong></span><Badge level="MORE_DATA" /></div><div className="metrics"><div><small>Wohnfläche</small><strong>72,4 m²</strong><span>✓ bestätigt</span></div><div><small>Netto-HMZ</small><strong>€ 850,00</strong><span>✓ extrahiert</span></div><div><small>Evidenz</small><strong>7 Fakten</strong><span>2 offen</span></div><div><small>Routing</small><strong>Mehr Daten</strong><span>Förderstatus offen</span></div></div></section>
     <section className="system"><div className="system-title"><span className="eyebrow">Systemprinzip</span><h2>Eine belegbare Kette — kein KI-Orakel.</h2><p>Jede Aussage bleibt mit Quelle, Evidenzstufe und Unsicherheit nachvollziehbar.</p></div><div className="pipeline">{pipeline.map((item, index) => <div key={item}><span>0{index + 1}</span><strong>{item}</strong><small>{index === 0 ? "Vertrag lesen" : index === 1 ? "GIS · BEV · GB · GBV · Bauakt" : index === 2 ? "Quellen bewerten" : index === 3 ? "Fall einordnen" : index === 4 ? "Nur wenn zulässig" : "Kanzlei entscheidet"}</small></div>)}</div></section>
   </>;
@@ -136,4 +137,70 @@ function Result({ outcome, setOutcome }: { outcome: Outcome; setOutcome: (v: Out
 
 function CaseFile({ lift, keller, zustand }: { lift: Answer; keller: Answer; zustand: string }) {
   return <div className="content full case-file"><div className="file-heading"><div><span className="eyebrow">06 · Digital Case File</span><h2>Kanzlei-Akt · MA–GRAZ–001</h2><p>Strukturierte Übergabe aus dem fiktiven Demo-Musterfall</p></div><div><button>Drucken</button><button>PDF-Export ↓</button></div></div><div className="file-status"><span><i/><small>Routing</small><strong>MORE_DATA</strong></span><span><small>Bearbeitungsstand</small><strong>Vorprüfung abgeschlossen</strong></span><span><small>Rechtsstatus</small><strong>Nicht rechtsverbindlich</strong></span></div><div className="file-grid"><section className="file-card summary"><h3><i>01</i>Sachverhalt</h3><p>Fiktive Hauptmiete einer 72,4 m² großen Wohnung in Graz. Vertragsbeginn 01.07.2024, fünf Jahre befristet. Netto-Hauptmietzins € 850,00 zuzüglich € 176,00 Betriebskosten. Die maßgebliche Gebäudekategorie ist noch nicht abschließend belegt.</p><div><span><small>Nutzung</small><strong>Wohnen · Hauptmiete</strong></span><span><small>Vertrag</small><strong>15.06.2024</strong></span><span><small>Laufzeit</small><strong>5 Jahre befristet</strong></span><span><small>Nutzerdaten</small><strong>Lift: {lift} · Keller: {keller}</strong></span></div></section><section className="file-card"><h3><i>02</i>Mietzins</h3><div className="rent-total"><small>Monatliche Vorschreibung</small><strong>€ 1.026,00</strong></div><p className="rent-line"><span>Netto-Hauptmietzins</span><strong>€ 850,00</strong></p><p className="rent-line"><span>Betriebskosten</span><strong>€ 176,00</strong></p><p className="rent-line muted"><span>Hypothetische Bandbreite</span><strong>€ 560–720*</strong></p><small>* Illustrativ, nicht final.</small></section><section className="file-card"><h3><i>03</i>MRG-Einordnung</h3><div className="mrg"><span>Vertrag</span>→<span>Gebäudefakten</span>→<span>Offen</span></div><div className="assessment"><small>Vorläufige Einschätzung</small><strong>Regime nicht sicher klassifizierbar</strong><p>Förderung und Baubewilligung fehlen. Keine finale Mietzinsberechnung.</p></div></section><section className="file-card"><h3><i>04</i>Nutzerangaben</h3><div className="user-facts"><p><span>Lift vorhanden</span><strong>{lift}</strong><small>Selbstauskunft</small></p><p><span>Keller mitvermietet</span><strong>{keller}</strong><small>Selbstauskunft</small></p><p><span>Zustand bei Einzug</span><strong>{zustand}</strong><small>Selbstauskunft</small></p></div></section></div><section className="file-card evidence-file"><h3><i>05</i>Evidence Register <small>7 Einträge</small></h3><EvidenceTable compact/></section><section className="human"><div><b>§</b><span><small>Human Review</small><h3>Was die Kanzlei noch prüfen muss</h3></span></div><div className="checklist">{[["1","Anwendungsbereich des MRG","Voll-, Teil- oder Nichtanwendung anhand belegter Gebäudefakten."],["2","Förder- und Eigentumshistorie","Relevante Akten und Abfragen beiziehen."],["3","Baubewilligung und Zubau","Originalakten prüfen; GIS-Datum nicht als Beweis verwenden."],["4","Mietzinsberechnung freigeben","Erst nach gesicherter Regimeentscheidung."]].map(([n,t,d]) => <article key={n}><i>{n}</i><p><strong>{t}</strong><small>{d}</small></p></article>)}</div></section><div className="inline-pipeline"><span>Verarbeitungskette</span>{pipeline.map((item,index) => <b key={item}><i>0{index+1}</i>{item}{index < 5 && <em>→</em>}</b>)}</div><p className="disclaimer">Fiktiver Demo-Fall · Keine echten personenbezogenen Daten · Keine Rechtsberatung</p></div>;
+}
+
+function LandlordDemo({ onClose }: { onClose: () => void }) {
+  const [tab, setTab] = useState<"check" | "risks" | "review">("check");
+  const landlordFacts = [
+    ["Vertragsstatus", "Entwurf · noch nicht unterzeichnet", "Dokumentkopf"],
+    ["Mietobjekt", "Musterstraße 18, 8010 Graz", "Vertragsentwurf S. 1"],
+    ["Wohnfläche", "72,4 m²", "Vertragsentwurf S. 2"],
+    ["Netto-Hauptmietzins", "€ 850,00 / Monat", "Vertragsentwurf S. 3"],
+    ["Betriebskosten", "€ 176,00 / Monat", "Vertragsentwurf S. 3"],
+    ["Befristung", "5 Jahre vorgesehen", "Vertragsentwurf S. 2"],
+  ];
+  const risks = [
+    ["Befristungsregelung", "REVIEW", "Formulierung und Wirksamkeit anwaltlich prüfen"],
+    ["Mietzinsgrundlage", "MORE_DATA", "Gebäuderegime und Förderhistorie nicht bestätigt"],
+    ["Betriebskosten-Verweis", "REVIEW", "Verweis und Aufschlüsselung sind im Entwurf unklar"],
+    ["Kaution & Fälligkeit", "CONFIRMED", "Betrag und Fälligkeit im Entwurf enthalten"],
+    ["Übergabeprotokoll", "MISSING", "Anlage ist angekündigt, aber nicht beigefügt"],
+    ["Hausordnung", "MISSING", "Im Vertrag erwähnt, Anlage fehlt"],
+  ];
+  const reviewItems = [
+    ["1", "Anwendungsbereich und Mietzinsregime", "Gebäudedaten, Förderung und Baubewilligung anhand geeigneter Quellen verifizieren."],
+    ["2", "Befristung und Vertragsklauseln", "Wirksamkeit, Verständlichkeit und Zusammenspiel der Klauseln rechtlich beurteilen."],
+    ["3", "Mietzins und Nebenkosten", "Berechnungsgrundlage, Aufschlüsselung und vertragliche Verweise prüfen."],
+    ["4", "Anlagen und Dokumentation", "Übergabeprotokoll, Hausordnung und relevante Objektunterlagen vervollständigen."],
+  ];
+
+  return <section className="landlord-shell">
+    <div className="landlord-hero">
+      <div><span className="eyebrow">Vermieter-Modus · Demo</span><h1>Vertragsrisiken erkennen,<br/><em>bevor unterschrieben wird.</em></h1><p>Der Prototyp prüft Vollständigkeit, Evidenz und Risikopunkte eines Vertragsentwurfs und bereitet eine anwaltliche Freigabe vor.</p></div>
+      <aside><small>Fiktiver Entwurf</small><strong>VM–GRAZ–001</strong><span>Musterstraße 18 · Graz</span><Badge level="REVIEW_REQUIRED"/></aside>
+    </div>
+
+    <Notice warning><strong>Keine Unanfechtbarkeits-Garantie.</strong> Der Check kann Risiken und fehlende Unterlagen sichtbar machen. Er garantiert weder die Wirksamkeit aller Klauseln noch, dass ein Vertrag später nicht bestritten wird.</Notice>
+
+    <nav className="landlord-tabs" aria-label="Vermieter-Demo">
+      <button className={tab === "check" ? "active" : ""} onClick={() => setTab("check")}><i>01</i>Vertragscheck</button>
+      <button className={tab === "risks" ? "active" : ""} onClick={() => setTab("risks")}><i>02</i>Risikoanalyse</button>
+      <button className={tab === "review" ? "active" : ""} onClick={() => setTab("review")}><i>03</i>Anwaltliche Freigabe</button>
+    </nav>
+
+    {tab === "check" && <div className="landlord-panel">
+      <div className="panel-heading"><div><span>Fact Extraction + Completeness Check</span><h2>Was steht im Vertragsentwurf?</h2><p>Technisch erkannte Daten werden von rechtlich geprüften Aussagen getrennt.</p></div><b>6/6 Felder erkannt</b></div>
+      <div className="landlord-facts">{landlordFacts.map(([label,value,source]) => <article key={label}><small>{label}</small><strong>{value}</strong><span>§ {source}</span></article>)}</div>
+      <div className="document-readiness"><div><small>Dokumentenpaket</small><strong>3 von 5 Bestandteilen vorhanden</strong><span><i/></span></div><ul><li className="ready">Vertragsentwurf</li><li className="ready">Mietzinsaufstellung</li><li className="ready">Objektstammdaten</li><li>Übergabeprotokoll fehlt</li><li>Hausordnung fehlt</li></ul></div>
+      <div className="panel-actions"><button className="secondary" onClick={onClose}>Zurück zur Übersicht</button><button className="primary" onClick={() => setTab("risks")}>Risiken ansehen <span>→</span></button></div>
+    </div>}
+
+    {tab === "risks" && <div className="landlord-panel">
+      <div className="panel-heading"><div><span>Compliance- und Evidenz-Routing</span><h2>Welche Punkte sind vor Abschluss offen?</h2><p>Die Demo priorisiert Risiken, ohne selbst eine verbindliche Rechtsmeinung abzugeben.</p></div><Badge level="REVIEW_REQUIRED"/></div>
+      <div className="risk-summary"><article><strong>1</strong><span>Bestätigt</span></article><article><strong>2</strong><span>Review</span></article><article><strong>1</strong><span>Mehr Daten</span></article><article><strong>2</strong><span>Fehlend</span></article></div>
+      <div className="risk-table"><div className="risk-row risk-head"><span>Prüfpunkt</span><span>Status</span><span>Nächster Schritt</span></div>{risks.map(([name,status,next]) => <div className="risk-row" key={name}><strong>{name}</strong><Badge level={status}/><span>{next}</span></div>)}</div>
+      <div className="landlord-route"><b>!</b><div><small>Routing-Ergebnis</small><h3>Anwaltliche Freigabe erforderlich</h3><p>Der Entwurf ist strukturell weitgehend vollständig, aber Regime, Befristung und einzelne Verweise benötigen fachliche Prüfung.</p></div><Badge level="REVIEW_REQUIRED"/></div>
+      <div className="panel-actions"><button className="secondary" onClick={() => setTab("check")}>← Vertragsdaten</button><button className="primary" onClick={() => setTab("review")}>Freigabe-Akt öffnen <span>→</span></button></div>
+    </div>}
+
+    {tab === "review" && <div className="landlord-panel">
+      <div className="panel-heading"><div><span>Digital Review File</span><h2>Vorbereitete Übergabe an die Kanzlei</h2><p>Alle erkannten Fakten, Quellen, Lücken und konkreten Prüffragen in einer Ansicht.</p></div><button className="export-button">PDF-Export ↓</button></div>
+      <div className="review-overview"><article><small>Mandatsseite</small><strong>Vermieterseite / Hausverwaltung</strong></article><article><small>Vertragsstatus</small><strong>Entwurf · nicht unterzeichnet</strong></article><article><small>Routing</small><strong>REVIEW_REQUIRED</strong></article><article><small>Automatische Freigabe</small><strong>Nicht erteilt</strong></article></div>
+      <section className="lawyer-review"><div><b>§</b><span><small>Human Review</small><h3>Was die Kanzlei freigeben soll</h3></span></div><div>{reviewItems.map(([n,title,text]) => <article key={n}><i>{n}</i><p><strong>{title}</strong><small>{text}</small></p></article>)}</div></section>
+      <section className="approval-box"><div><small>Demo-Freigabestatus</small><h3>Nicht freigegeben</h3><p>Zwei Anlagen und eine belastbare Einordnung der Mietzinsgrundlage fehlen.</p></div><button disabled>Anwaltliche Freigabe erteilen</button></section>
+      <Notice>In einer echten Version müsste definiert werden, wer freigeben darf, welche Prüfung dokumentiert wird und wie Versionen, Haftung und Änderungen nach der Freigabe behandelt werden.</Notice>
+      <div className="panel-actions"><button className="secondary" onClick={() => setTab("risks")}>← Risikoanalyse</button><button className="primary" onClick={onClose}>Demo beenden</button></div>
+    </div>}
+    <p className="landlord-disclaimer">Fiktiver Demo-Fall · Keine echten personenbezogenen Daten · Keine Rechtsberatung · Keine Garantie der Vertragswirksamkeit</p>
+  </section>;
 }

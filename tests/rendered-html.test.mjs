@@ -19,7 +19,8 @@ test("renders the Mietrecht Agentur demo", async () => {
   const html = await response.text();
   assert.match(html, /Mietrecht Agentur/);
   assert.match(html, /Nicht rechtsverbindliche Vorprüfung/);
-  assert.match(html, /Mietvertrag prüfen/);
+  assert.match(html, /Mieter-Fall prüfen/);
+  assert.match(html, /Vermieter-Check ansehen/);
   assert.match(html, /MA–GRAZ–001/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview/);
 });
